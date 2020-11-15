@@ -8,50 +8,44 @@ import (
 	"time"
 )
 
+type matrix struct { /*OPT*/
+	m [][]float64 /*OPT*/
+} /*OPT*/
+
 func makeTimestamp() int64 {
 	return time.Now().UnixNano()
 }
-
-func IDX(i uint, j uint, n uint) uint {
-	return j + i*n
-}
-
-func chol(A []float64, n uint) int {
+func chol(A matrix, n uint) int {
 	var j uint
 	var i uint
 	var k uint
-	var tmp float64 /*OPT*/
 
 	for j = 0; j < n; j++ {
 		for i = j; i < n; i++ {
-			tmp = A[IDX(i, j, n)] /*OPT*/
 			for k = 0; k < j; k++ {
-				tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)]) /*OPT*/
+				A.m[i][j] = A.m[i][j] - (A.m[i][k] * A.m[j][k])
 			}
-			A[IDX(i, j, n)] = tmp /*OPT*/
 		}
 
-		tmp = A[IDX(j, j, n)] /*OPT*/
-		if tmp < 0.0 {        /*OPT*/
+		if A.m[j][j] < 0 {
 			return (1)
 		}
 
-		tmp = math.Sqrt(tmp)  /*OPT*/
-		A[IDX(j, j, n)] = tmp /*OPT*/
+		A.m[j][j] = math.Sqrt(A.m[j][j])
 
 		for i = j + 1; i < n; i++ {
-			A[IDX(i, j, n)] = A[IDX(i, j, n)] / tmp /*OPT*/
+			A.m[i][j] = A.m[i][j] / A.m[j][j]
 		}
 	}
 	return (0)
 }
 
-func show(A []float64, n uint) {
+func show(A [][]float64, n uint) {
 	var i uint
 	var j uint
 	for i = 0; i < n; i++ {
 		for j = 0; j < n; j++ {
-			fmt.Print(A[IDX(i, j, n)])
+			fmt.Print(A[i][j])
 		}
 		fmt.Println()
 	}
@@ -62,18 +56,23 @@ func main() {
 	var n uint = uint(nx)
 	var t1 int64
 	var t2 int64
-	var A []float64 = make([]float64, n*n)
+	var m [][]float64 = make([][]float64, n) /*OPT*/
+	var A matrix = matrix{m: m}              /*OPT*/
+	var h uint
+	for h = 0; h < n; h++ {
+		A.m[h] = make([]float64, n)
+	}
 
 	var i uint
 	for i = 0; i < n-1; i++ {
-		A[IDX(i, i, n)] = 2.0
-		A[IDX(i, i+1, n)] = 1.0
-		A[IDX(i+1, i, n)] = 1.0
+		A.m[i][i] = 2.0
+		A.m[i+1][i] = 1.0
+		A.m[i][i+1] = 1.0
 	}
-	A[IDX(n-1, n-1, n)] = 2.0
+	A.m[n-1][n-1] = 2.0
 
 	if len(os.Args) > 2 {
-		show(A, n)
+		show(A.m, n)
 	}
 
 	t1 = makeTimestamp()
@@ -83,7 +82,7 @@ func main() {
 	t2 = makeTimestamp()
 
 	if len(os.Args) > 2 {
-		show(A, n)
+		show(A.m, n)
 	}
 
 	fmt.Print("GO:\t")

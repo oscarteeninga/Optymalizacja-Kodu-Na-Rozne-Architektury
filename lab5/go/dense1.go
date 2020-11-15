@@ -13,55 +13,45 @@ func makeTimestamp() int64 {
 }
 
 func IDX(i uint, j uint, n uint) uint {
-	return ((i)*((i)+1)/2 + (j))
+	return j + i*n
 }
 
-func max(a int, b int) uint {
-	if a > b {
-		return uint(a)
-	} else {
-		return uint(b)
-	}
-}
-
-func chol(A []float64, n uint) int {
+func chol(A []int /*OPT*/, n uint) int {
 	var j uint
 	var i uint
 	var k uint
-	var tmp float64
-	var blksize uint = 8
+	var tmp int /*OPT*/
 
 	for j = 0; j < n; j++ {
 		for i = j; i < n; i++ {
 			tmp = A[IDX(i, j, n)]
 			for k = 0; k < j; k++ {
-				if k < max(int(j-blksize), 0) {
-					tmp = tmp -
-						(A[IDX(i, k, n)] * A[IDX(j, k, n)]) +
-						(A[IDX(i, k+1, n)] * A[IDX(j, k+1, n)]) +
-						(A[IDX(i, k+2, n)] * A[IDX(j, k+2, n)]) +
-						(A[IDX(i, k+3, n)] * A[IDX(j, k+3, n)]) +
-						(A[IDX(i, k+4, n)] * A[IDX(j, k+4, n)]) +
-						(A[IDX(i, k+5, n)] * A[IDX(j, k+5, n)]) +
-						(A[IDX(i, k+6, n)] * A[IDX(j, k+6, n)]) +
-						(A[IDX(i, k+7, n)] * A[IDX(j, k+7, n)])
-					k = k + blksize
-				} else {
-					tmp = tmp - A[IDX(i, k, n)]*A[IDX(j, k, n)]
-				}
+				tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)])
 			}
 			A[IDX(i, j, n)] = tmp
 		}
-		if A[IDX(j, j, n)] < 0.0 {
+		var real float64 = float64(A[IDX(j, j, n)])
+		if real < 0.0 {
 			return (1)
 		}
-		A[IDX(j, j, n)] = math.Sqrt(A[IDX(j, j, n)])
-		tmp = A[IDX(j, j, n)]
+		real = math.Sqrt(real)
+		A[IDX(j, j, n)] = int(real)
 		for i = j + 1; i < n; i++ {
-			A[IDX(i, j, n)] = tmp / A[IDX(j, j, n)]
+			A[IDX(i, j, n)] = int(float64(A[IDX(i, j, n)]) / real)
 		}
 	}
 	return (0)
+}
+
+func show(A []int, n uint) {
+	var i uint
+	var j uint
+	for i = 0; i < n; i++ {
+		for j = 0; j < n; j++ {
+			fmt.Print(A[IDX(i, j, n)])
+		}
+		fmt.Println()
+	}
 }
 
 func main() {
@@ -69,11 +59,18 @@ func main() {
 	var n uint = uint(nx)
 	var t1 int64
 	var t2 int64
-	var A []float64 = make([]float64, n*n)
+	var A []int = make([]int, n*n) /*OPT*/
 
 	var i uint
-	for i = 0; i < n; i++ {
-		A[IDX(i, i, n)] = 1.0
+	for i = 0; i < n-1; i++ {
+		A[IDX(i, i, n)] = 2.0
+		A[IDX(i, i+1, n)] = 1.0
+		A[IDX(i+1, i, n)] = 1.0
+	}
+	A[IDX(n-1, n-1, n)] = 2.0
+
+	if len(os.Args) > 2 {
+		show(A, n)
 	}
 
 	t1 = makeTimestamp()
@@ -81,6 +78,11 @@ func main() {
 		fmt.Println("error")
 	}
 	t2 = makeTimestamp()
+
+	if len(os.Args) > 2 {
+		show(A, n)
+	}
+
 	fmt.Print("GO:\t")
 	fmt.Print(float64(t2-t1) / float64(1000000000))
 	fmt.Println(" [s]")

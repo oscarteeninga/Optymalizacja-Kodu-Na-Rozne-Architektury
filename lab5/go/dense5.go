@@ -29,7 +29,7 @@ func chol(A []float64, n uint) int {
 	var i uint
 	var k uint
 	var tmp float64
-	var blksize uint = 16 /*OPT*/
+	var blksize uint = 32 /*OPT*/
 
 	for j = 0; j < n; j++ {
 		for i = j; i < n; i++ {
@@ -44,22 +44,39 @@ func chol(A []float64, n uint) int {
 					tmp = tmp - (A[IDX(i, k+5, n)] * A[IDX(j, k+5, n)])
 					tmp = tmp - (A[IDX(i, k+6, n)] * A[IDX(j, k+6, n)])
 					tmp = tmp - (A[IDX(i, k+7, n)] * A[IDX(j, k+7, n)])
-					tmp = tmp - (A[IDX(i, k+8, n)] * A[IDX(j, k+8, n)])   /*OPT*/
-					tmp = tmp - (A[IDX(i, k+9, n)] * A[IDX(j, k+9, n)])   /*OPT*/
-					tmp = tmp - (A[IDX(i, k+10, n)] * A[IDX(j, k+10, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+11, n)] * A[IDX(j, k+11, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+12, n)] * A[IDX(j, k+12, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+13, n)] * A[IDX(j, k+13, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+14, n)] * A[IDX(j, k+14, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+15, n)] * A[IDX(j, k+15, n)]) /*OPT*/
-					k = k + blksize
+					tmp = tmp - (A[IDX(i, k+8, n)] * A[IDX(j, k+8, n)])
+					tmp = tmp - (A[IDX(i, k+9, n)] * A[IDX(j, k+9, n)])
+					tmp = tmp - (A[IDX(i, k+10, n)] * A[IDX(j, k+10, n)])
+					tmp = tmp - (A[IDX(i, k+11, n)] * A[IDX(j, k+11, n)])
+					tmp = tmp - (A[IDX(i, k+12, n)] * A[IDX(j, k+12, n)])
+					tmp = tmp - (A[IDX(i, k+13, n)] * A[IDX(j, k+13, n)])
+					tmp = tmp - (A[IDX(i, k+14, n)] * A[IDX(j, k+14, n)])
+					tmp = tmp - (A[IDX(i, k+15, n)] * A[IDX(j, k+15, n)])
+					tmp = tmp - (A[IDX(i, k+16, n)] * A[IDX(j, k+16, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+17, n)] * A[IDX(j, k+17, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+18, n)] * A[IDX(j, k+18, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+19, n)] * A[IDX(j, k+19, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+20, n)] * A[IDX(j, k+20, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+21, n)] * A[IDX(j, k+21, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+22, n)] * A[IDX(j, k+22, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+23, n)] * A[IDX(j, k+23, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+24, n)] * A[IDX(j, k+24, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+25, n)] * A[IDX(j, k+25, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+26, n)] * A[IDX(j, k+26, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+27, n)] * A[IDX(j, k+27, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+28, n)] * A[IDX(j, k+28, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+29, n)] * A[IDX(j, k+29, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+30, n)] * A[IDX(j, k+30, n)]) /*OPT*/
+					tmp = tmp - (A[IDX(i, k+31, n)] * A[IDX(j, k+31, n)]) /*OPT*/
+					k += blksize
 				} else {
 					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)])
-					k++
+					k += 1
 				}
 			}
 			A[IDX(i, j, n)] = tmp
 		}
+
 		tmp = A[IDX(j, j, n)]
 		if tmp < 0.0 {
 			return (1)

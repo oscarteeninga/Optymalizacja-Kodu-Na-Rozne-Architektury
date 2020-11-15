@@ -38,6 +38,17 @@ func chol(A []float64, n uint) int {
 	return (0)
 }
 
+func show(A []float64, n uint) {
+	var i uint
+	var j uint
+	for i = 0; i < n; i++ {
+		for j = 0; j < n; j++ {
+			fmt.Print(A[IDX(i, j, n)])
+		}
+		fmt.Println()
+	}
+}
+
 func main() {
 	nx, _ := strconv.Atoi(os.Args[1])
 	var n uint = uint(nx)
@@ -46,8 +57,15 @@ func main() {
 	var A []float64 = make([]float64, n*n)
 
 	var i uint
-	for i = 0; i < n; i++ {
-		A[IDX(i, i, n)] = 1.0
+	for i = 0; i < n-1; i++ {
+		A[IDX(i, i, n)] = 2.0
+		A[IDX(i, i+1, n)] = 1.0
+		A[IDX(i+1, i, n)] = 1.0
+	}
+	A[IDX(n-1, n-1, n)] = 2.0
+
+	if len(os.Args) > 2 {
+		show(A, n)
 	}
 
 	t1 = makeTimestamp()
@@ -55,6 +73,11 @@ func main() {
 		fmt.Println("error")
 	}
 	t2 = makeTimestamp()
+
+	if len(os.Args) > 2 {
+		show(A, n)
+	}
+
 	fmt.Print("GO:\t")
 	fmt.Print(float64(t2-t1) / float64(1000000000))
 	fmt.Println(" [s]")
