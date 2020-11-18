@@ -35,29 +35,31 @@ func chol(A []float64, n uint) int {
 		for i = j; i < n; i++ {
 			tmp = A[IDX(i, j, n)]
 			for k = 0; k < j; {
-				if k < max(int(j-blksize), 0) {
-					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)])
-					tmp = tmp - (A[IDX(i, k+1, n)] * A[IDX(j, k+1, n)])
-					tmp = tmp - (A[IDX(i, k+2, n)] * A[IDX(j, k+2, n)])
-					tmp = tmp - (A[IDX(i, k+3, n)] * A[IDX(j, k+3, n)])
-					tmp = tmp - (A[IDX(i, k+4, n)] * A[IDX(j, k+4, n)])
-					tmp = tmp - (A[IDX(i, k+5, n)] * A[IDX(j, k+5, n)])
-					tmp = tmp - (A[IDX(i, k+6, n)] * A[IDX(j, k+6, n)])
-					tmp = tmp - (A[IDX(i, k+7, n)] * A[IDX(j, k+7, n)])
-					tmp = tmp - (A[IDX(i, k+8, n)] * A[IDX(j, k+8, n)])   /*OPT*/
-					tmp = tmp - (A[IDX(i, k+9, n)] * A[IDX(j, k+9, n)])   /*OPT*/
-					tmp = tmp - (A[IDX(i, k+10, n)] * A[IDX(j, k+10, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+11, n)] * A[IDX(j, k+11, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+12, n)] * A[IDX(j, k+12, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+13, n)] * A[IDX(j, k+13, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+14, n)] * A[IDX(j, k+14, n)]) /*OPT*/
-					tmp = tmp - (A[IDX(i, k+15, n)] * A[IDX(j, k+15, n)]) /*OPT*/
+				if k < max(int(j)-int(blksize), 0) {
+					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)]) +
+					(A[IDX(i, k+1, n)] * A[IDX(j, k+1, n)]) + 
+					(A[IDX(i, k+2, n)] * A[IDX(j, k+2, n)]) +
+					(A[IDX(i, k+3, n)] * A[IDX(j, k+3, n)]) + 
+					(A[IDX(i, k+4, n)] * A[IDX(j, k+4, n)]) +
+					(A[IDX(i, k+5, n)] * A[IDX(j, k+5, n)]) +
+					(A[IDX(i, k+6, n)] * A[IDX(j, k+6, n)]) +
+					(A[IDX(i, k+7, n)] * A[IDX(j, k+7, n)]) +
+					(A[IDX(i, k+8, n)] * A[IDX(j, k+8, n)]) + /*OPT*/
+					(A[IDX(i, k+9, n)] * A[IDX(j, k+9, n)]) + /*OPT*/
+					(A[IDX(i, k+10, n)] * A[IDX(j, k+10, n)]) + /*OPT*/
+					(A[IDX(i, k+11, n)] * A[IDX(j, k+11, n)]) + /*OPT*/
+					(A[IDX(i, k+12, n)] * A[IDX(j, k+12, n)]) + /*OPT*/
+					(A[IDX(i, k+13, n)] * A[IDX(j, k+13, n)]) + /*OPT*/
+					(A[IDX(i, k+14, n)] * A[IDX(j, k+14, n)]) + /*OPT*/
+					(A[IDX(i, k+15, n)] * A[IDX(j, k+15, n)]) /*OPT*/
 					k = k + blksize
 				} else {
 					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)])
 					k++
 				}
 			}
+
+
 			A[IDX(i, j, n)] = tmp
 		}
 		tmp = A[IDX(j, j, n)]

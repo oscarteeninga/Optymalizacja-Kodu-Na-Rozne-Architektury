@@ -16,50 +16,28 @@ func IDX(i uint, j uint, n uint) uint {
 	return j + i*n
 }
 
-func max(a int, b int) uint {
-	if a > b {
-		return uint(a)
-	} else {
-		return uint(b)
-	}
-}
-
 func chol(A []float64, n uint) int {
 	var j uint
 	var i uint
 	var k uint
-	var tmp float64
-	var blksize uint = 8 /*OPT*/
+	var tmp float64 
+	var s float64 /*OPT*/
 
 	for j = 0; j < n; j++ {
 		for i = j; i < n; i++ {
 			tmp = A[IDX(i, j, n)]
-			for k = 0; k < j; {
-				if k < max(int(j-blksize), 0) { /*OPT*/
-					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)]) +     /*OPT*/
-					(A[IDX(i, k+1, n)] * A[IDX(j, k+1, n)]) +/*OPT*/
-					(A[IDX(i, k+2, n)] * A[IDX(j, k+2, n)]) +/*OPT*/
-					(A[IDX(i, k+3, n)] * A[IDX(j, k+3, n)]) +/*OPT*/
-					(A[IDX(i, k+4, n)] * A[IDX(j, k+4, n)]) +/*OPT*/
-					(A[IDX(i, k+5, n)] * A[IDX(j, k+5, n)]) + /*OPT*/
-					(A[IDX(i, k+6, n)] * A[IDX(j, k+6, n)]) + /*OPT*/
-					(A[IDX(i, k+7, n)] * A[IDX(j, k+7, n)]) /*OPT*/
-					k = k + blksize                                     /*OPT*/
-				} else {
-					tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)]) /*OPT*/
-					k++
-				}
+			for k = 0; k < j; k++ {
+				tmp = tmp - (A[IDX(i, k, n)] * A[IDX(j, k, n)])
 			}
-			A[IDX(i, j, n)] = tmp
-		}
-		tmp = A[IDX(j, j, n)]
-		if tmp < 0.0 {
-			return (1)
-		}
-		tmp = math.Sqrt(tmp)
-		A[IDX(j, j, n)] = tmp
-		for i = j + 1; i < n; i++ {
-			A[IDX(i, j, n)] = A[IDX(i, j, n)] / tmp
+			if i == j {
+				if tmp <= 0 {
+					return (1)
+				}
+				s = math.Sqrt(tmp)
+				A[IDX(j, j, n)] = s /*OPT*/
+			} else {
+				A[IDX(i, j, n)] = tmp / s/*OPT*/
+			}
 		}
 	}
 	return (0)
